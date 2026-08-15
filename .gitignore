@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Data & weights (large binary artifacts)
+dataset/
+data/
+weights/*.pth
+weights/*.pt
+weights/*.onnx
+!weights/README.md
+
+# The actual KLA dataset lives under datasets/ alongside the datasets/*.py
+# package code -- ignore only the data (raw archives + extracted arrays),
+# never the .py source files.
+datasets/*.zip
+datasets/train/
+datasets/Test_NoisyLR/
+datasets/*.npy
+
+# Outputs
+outputs/restored/*
+outputs/comparisons/*
+outputs/test_restored/*
+!outputs/restored/.gitkeep
+!outputs/comparisons/.gitkeep
+!outputs/test_restored/.gitkeep
+
+# Logs
+runs/
+logs/
+*.log
+csv_logs/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Misc
+*.tmp
+*.bak

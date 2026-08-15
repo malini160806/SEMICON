@@ -1,0 +1,137 @@
+# =============================================================================
+# KLA/i4C Image Restoration — master configuration
+# All hyperparameters live here. Nothing in train.py/evaluate.py is hard-coded.
+# =============================================================================
+
+experiment:
+  name: "kla_restoration_v1"
+  seed: 42
+  deterministic: false          # true = fully reproducible but slower cudnn
+
+model:
+  name: "nafsr"                 # NAFNet-inspired denoiser + PixelShuffle SR tail
+  in_channels: 1                # grayscale
+  out_channels: 1
+  base_channels: 48
+  enc_blocks: [2, 2, 4]         # NAF blocks per encoder stage (depth increases with downsampling)
+  middle_blocks: 4
+  dec_blocks: [2, 2, 2]
+  scale_factor: 2               # 2 => 128->256 or 256->512. Set 4 for 128->512 style jumps.
+  refine_blocks: 4              # residual refinement blocks after upsampling
+  drop_path_rate: 0.0
+
+data:
+  # datasets/train/ is auto-inspected at load time (see datasets/paired_dataset.py:
+  # detect_split_folders) to find its degraded/ground-truth subfolders -- whatever
+  # they're actually named (degraded/ground_truth, noisy/clean, NoisyLR/GT, ...).
+  # For the KLA drop currently in this repo, that resolves to
+  # datasets/train/NoisyLR (degraded, 128x128 .npy) and datasets/train/GT
+  # (clean, 256x256 .npy).
+  root: "./datasets"
+  train_dir: "./datasets/train"
+  test_dir: "./datasets/Test_NoisyLR"     # degraded-only, no ground truth -- inference only, never used for train/val
+  validation_split: 0.2                    # 80/20 train/val, split from train_dir only
+  seed: 42                                 # seeds the deterministic train/val split (see datasets/paired_dataset.py:split_pairs)
+  patch_size: 128               # LR training patch size (HR patch = patch_size * scale_factor)
+  scale_factor: 2               # expected LR->HR ratio; must match model.scale_factor. Detected per-pair and cross-checked against this.
+  num_workers: 4
+  pin_memory: true
+  cache_images: false           # set true for small datasets that fit in RAM
+  max_pairs: null               # optional cap on total train+val pool BEFORE the 80/20 split (seeded, deterministic) -- for fast iteration on a subset; null = use all pairs
+
+normalization:
+  # Strategy: GT is normalized with a FIXED divisor; degraded input is
+  # normalized WITHOUT clamping, so out-of-range noise stays visible to the
+  # model. See README "Intensity Handling" for full rationale.
+  #
+  # The KLA .npy dataset arrives ALREADY pre-normalized (GT strictly in
+  # [0,1] float32; NoisyLR mostly in [0,1] but with noise pushing values
+  # below 0 / above 1). For pre-normalized float data like this, "fixed"
+  # with fixed_range=[0,1] is the correct choice -- it's an identity
+  # mapping that still does NOT clip, so it preserves the noise-driven
+  # excursions exactly as delivered instead of rescaling them per-image.
+  # If you instead train on raw 8-/16-bit images (PNG/TIFF) whose GT
+  # dynamic range isn't already known, switch this to "percentile", which
+  # computes per-image robust min/max from the degraded image itself.
+  method: "fixed"                # options: percentile | minmax | fixed
+  lower_percentile: 0.5          # used only if method == percentile
+  upper_percentile: 99.5         # used only if method == percentile
+  fixed_range: [0.0, 1.0]        # used only if method == fixed
+  eps: 1.0e-6
+
+augmentation:
+  enabled: true
+  random_crop: true
+  horizontal_flip: 0.5
+  vertical_flip: 0.5
+  rotate90: 0.5
+  # Synthetic degradation is OPTIONAL and only fires with `synthetic_prob`
+  # probability on top of the real degraded/gt pairs already provided —
+  # it never replaces real pairs, only augments them for extra diversity.
+  synthetic_prob: 0.3
+  gaussian_noise:
+    enabled: true
+    sigma_range: [0.0, 0.05]     # fraction of normalized [0,1] dynamic range
+  speckle_noise:
+    enabled: true
+    variance_range: [0.0, 0.05]
+  blur:
+    enabled: true
+    prob: 0.2
+    kernel_range: [3, 5]
+    sigma_range: [0.2, 1.0]
+  intensity_jitter:
+    enabled: true
+    brightness_range: [-0.05, 0.05]
+    contrast_range: [0.9, 1.1]
+
+loss:
+  charbonnier:
+    weight: 1.0
+    eps: 1.0e-3
+  ssim:
+    weight: 0.3
+    window_size: 11
+  gradient:
+    weight: 0.2
+  frequency:
+    weight: 0.1
+  perceptual:
+    weight: 0.0          # OFF by default: VGG is trained on natural RGB images,
+                          # domain mismatch for grayscale semiconductor imagery.
+                          # Set > 0 (e.g. 0.05) to enable channel-replicated VGG loss.
+    layers: ["relu2_2", "relu3_3"]
+
+training:
+  epochs: 200
+  batch_size: 16
+  learning_rate: 2.0e-4
+  weight_decay: 1.0e-4
+  optimizer: "adamw"
+  scheduler: "cosine"          # options: cosine | step | plateau
+  warmup_epochs: 5
+  min_lr: 1.0e-6
+  grad_clip_norm: 1.0
+  grad_accum_steps: 1
+  use_amp: true
+  ema:
+    enabled: true
+    decay: 0.999
+  early_stopping:
+    enabled: true
+    patience: 25
+    monitor: "val_psnr"        # maximize
+  val_every_n_epochs: 1
+  checkpoint_every_n_epochs: 5
+  resume: true
+  log_dir: "runs"
+  checkpoint_dir: "weights"
+  csv_log_path: "runs/train_log.csv"
+  select_best_metric: "psnr"   # options: psnr | ssim | lpips -> chooses weights/best_model.pth
+
+inference:
+  use_amp: true
+  use_tta: false               # optional flip/rotate self-ensemble, off by default (speed)
+  channels_last: false
+  compile: false                # torch.compile — off by default for portability
+  device: "auto"                # auto | cuda | cpu

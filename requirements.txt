@@ -1,0 +1,14 @@
+torch>=2.2.0
+torchvision>=0.17.0
+numpy>=1.24.0
+opencv-python-headless>=4.9.0
+Pillow>=10.0.0
+scikit-image>=0.22.0
+lpips>=0.1.4
+PyYAML>=6.0
+tensorboard>=2.16.0
+tqdm>=4.66.0
+matplotlib>=3.8.0
+imageio>=2.34.0
+tifffile>=2024.1.30
+pandas>=2.2.0
