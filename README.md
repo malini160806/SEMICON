@@ -289,13 +289,13 @@ python scripts/ablation_study.py --config config/config.yaml \
 ## 14. Hardware
 
 ```text
-GPU:              [RUN AFTER TRAINING]
-CUDA:             [RUN AFTER TRAINING]
-PyTorch:          2.13+ (see requirements.txt for the pinned floor)
-Training time:    [RUN AFTER TRAINING]
-Model parameters: [RUN AFTER TRAINING]  (≈7M at default base_channels=48, scale=2)
-Model size:       [RUN AFTER TRAINING]
-Inference time:   [RUN AFTER TRAINING]  (evaluate.py reports this automatically)
+GPU:              NVIDIA Tesla T4 (Google Colab)
+CUDA:             CUDA-enabled PyTorch on NVIDIA T4
+PyTorch:          2.13+ 
+Training time:    ~2.5-3 hours for 30 epochs
+Model parameters: ≈7M at default base_channels=48, scale=2
+Model size:       -28 MB (best_model.pth)
+Inference time:   [measure after running inference]
 ```
 
 No PSNR/SSIM/LPIPS/timing numbers are fabricated anywhere in this repository — every metric placeholder above and in `docs/hackathon_content.md` is filled in by actually running `train.py` / `evaluate.py` on the real KLA dataset.
