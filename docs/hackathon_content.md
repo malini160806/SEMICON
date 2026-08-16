@@ -62,30 +62,8 @@ Only claims we actually implemented — no invented novelty:
 
 ---
 
-## Slide 6 — Results
 
-All numbers below are placeholders until training completes on the real KLA dataset — **do not present fabricated numbers**. Regenerate with `evaluate.py` and `scripts/ablation_study.py`.
-
-| Model | PSNR | SSIM | LPIPS | Inference Time |
-|---|---|---|---|---|
-| Bicubic baseline | [RUN AFTER TRAINING] | [RUN AFTER TRAINING] | [RUN AFTER TRAINING] | [RUN AFTER TRAINING] |
-| Denoising-only | [RUN AFTER TRAINING] | [RUN AFTER TRAINING] | [RUN AFTER TRAINING] | [RUN AFTER TRAINING] |
-| Super-resolution-only | [RUN AFTER TRAINING] | [RUN AFTER TRAINING] | [RUN AFTER TRAINING] | [RUN AFTER TRAINING] |
-| **NAFSR (unified, ours)** | [RUN AFTER TRAINING] | [RUN AFTER TRAINING] | [RUN AFTER TRAINING] | [RUN AFTER TRAINING] |
-
-- Model parameters: [RUN AFTER TRAINING] (≈7M at default config)
-- Model size: [RUN AFTER TRAINING] MB
-- Throughput: [RUN AFTER TRAINING] images/sec on [GPU MODEL — FILL IN]
-
-Generate this table with:
-```bash
-python scripts/ablation_study.py --config config/config.yaml \
-    --model bicubic:none --model unified:weights/best_model.pth --output_csv outputs/ablation_results.csv
-```
-
----
-
-## Slide 7 — Technology & Feasibility
+## Slide 6 — Technology & Feasibility
 
 - **Framework:** PyTorch 2.x, `torch.amp` mixed precision, optional `torch.compile`
 - **Architecture:** NAFSR (custom, ~7M params at default config) — small enough to train on a single GPU in hours, not days
@@ -95,10 +73,7 @@ python scripts/ablation_study.py --config config/config.yaml \
 
 ---
 
-
----
-
-## Slide 8 — References
+## Slide 7 — References
 
 - Chen, L. et al. *"Simple Baselines for Image Restoration"* (NAFNet), ECCV 2022.
 - Zamir, S. W. et al. *"Restormer: Efficient Transformer for High-Resolution Image Restoration"*, CVPR 2022.
