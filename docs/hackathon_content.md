@@ -6,10 +6,10 @@ Concise, presentation-ready content for a 9-slide deck. Placeholders marked `[FI
 
 ## Slide 1 — Team Details
 
-- **Team name:** [FILL IN]
-- **Members:** [FILL IN — name, role, e.g. "Model architecture & training", "Data pipeline & evaluation", "Presentation & documentation"]
+- **Team name:** TEAM MARVEL
+- **Members:** DHARSHAN G(PG-II YEAR), KAMALESH E(UG-IV YEAR), VENI SRI K(UG-III YEAR), VISHALINI S(UG-III YEAR)
 - **Track:** KLA/i4C Hackathon — AI-Based Restoration of Degraded Images
-- **Date:** [FILL IN]
+- **Date:** 16/08/2026
 
 ---
 
@@ -95,15 +95,10 @@ python scripts/ablation_study.py --config config/config.yaml \
 
 ---
 
-## Slide 8 — GitHub & Video
-
-- **GitHub repository:** [FILL IN — repo URL]
-- **Demo video:** [FILL IN — video URL]
-- **Trained weights:** [FILL IN — Git LFS / Hugging Face / Drive link, see weights/README.md]
 
 ---
 
-## Slide 9 — References
+## Slide 8 — References
 
 - Chen, L. et al. *"Simple Baselines for Image Restoration"* (NAFNet), ECCV 2022.
 - Zamir, S. W. et al. *"Restormer: Efficient Transformer for High-Resolution Image Restoration"*, CVPR 2022.
