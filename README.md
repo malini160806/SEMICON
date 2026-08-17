@@ -294,7 +294,7 @@ CUDA:             CUDA-enabled PyTorch on NVIDIA T4
 PyTorch:          2.13+ 
 Training time:    ~2.5-3 hours for 30 epochs
 Model parameters: ≈7M at default base_channels=48, scale=2
-Model size:       -28 MB (best_model.pth)
+Model size:       ~28 MB (best_model.pth)
 Inference time:   [measure after running inference]
 ```
 
