@@ -295,7 +295,7 @@ PyTorch:          2.13+
 Training time:    ~2.5-3 hours for 30 epochs
 Model parameters: ≈7M at default base_channels=48, scale=2
 Model size:       ~28 MB (best_model.pth)
-Inference time:   [measure after running inference]
+Inference time:   36.25ms/image
 ```
 
 No PSNR/SSIM/LPIPS/timing numbers are fabricated anywhere in this repository — every metric placeholder above and in `docs/hackathon_content.md` is filled in by actually running `train.py` / `evaluate.py` on the real KLA dataset.
